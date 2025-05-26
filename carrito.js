@@ -43,10 +43,15 @@ function initAgregarCarrito() {
     btn.addEventListener('click', () => {
       const productoDiv = btn.closest('.producto') || btn.closest('.producto-oferta');
       if (!productoDiv) return;
+      const precio = parseFloat(productoDiv.dataset.precio);
+      if (isNaN(precio)) {
+        alert("Error: Precio inválido para este producto.");
+        return;
+      }
       const producto = {
         id: productoDiv.dataset.id,
         nombre: productoDiv.dataset.nombre,
-        precio: parseFloat(productoDiv.dataset.precio)
+        precio: precio
       };
       agregarAlCarrito(producto);
     });
@@ -58,11 +63,3 @@ document.addEventListener('DOMContentLoaded', () => {
   actualizarContadorCarrito();
   initAgregarCarrito();
 });
-function actualizarContadorCarrito() {
-  const carrito = obtenerCarrito();
-  const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-  const linkCarrito = document.getElementById('link-carrito');
-  if (linkCarrito) {
-    linkCarrito.textContent = `Carrito (${totalItems})`;
-  }
-}

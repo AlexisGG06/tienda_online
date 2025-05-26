@@ -4,102 +4,224 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Carrito de Compras</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #fff0f6;
-      margin: 0;
-      padding: 2rem;
+    .tabla-carrito {
+      width: 90%;
+      max-width: 800px;
+      margin: 2rem auto;
+      border-collapse: collapse;
     }
-    h1 {
-      color: #d63384;
+    .tabla-carrito th, .tabla-carrito td {
+      border: 1px solid #d63384;
+      padding: 10px;
       text-align: center;
     }
-    .carrito-contenedor {
-      max-width: 600px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    .boton-eliminar {
+      background-color: #a0285f;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 4px;
     }
-    .producto-carrito {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #ddd;
+    .boton-eliminar:hover {
+      background-color: #d63384;
     }
-    .producto-carrito:last-child {
-      border-bottom: none;
-    }
-    .producto-info {
-      flex-grow: 1;
-    }
-    .producto-precio {
-      font-weight: bold;
-      color: #d63384;
-    }
-    #btn-pagar {
+    .boton-pagar {
+      margin: 1rem auto;
+      display: block;
       background-color: #d63384;
       color: white;
       border: none;
-      padding: 0.7rem 1.5rem;
-      border-radius: 5px;
-      cursor: pointer;
+      padding: 0.8rem 1.5rem;
       font-size: 1.1rem;
-      margin-top: 1rem;
-      display: block;
-      width: 100%;
-      transition: background-color 0.3s ease;
+      cursor: pointer;
+      border-radius: 6px;
     }
-    #btn-pagar:hover {
+    .boton-pagar:hover {
       background-color: #a0285f;
     }
   </style>
 </head>
 <body>
 
-  <h1>Tu Carrito de Compras</h1>
+<header>
+  <nav class="menu">
+    <a href="index.html">Inicio</a>
+    <a href="ofertas.html">Ofertas</a>
+    <a href="contacto.html">Contacto</a>
+   <a href="carrito.html" id="link-carrito">Carrito (0)</a>
 
-  <div class="carrito-contenedor" id="carrito-contenedor">
-    <!-- Aquí se agregarán los productos del carrito dinámicamente -->
-  </div>
+  </nav>
+</header>
 
-  <button id="btn-pagar">Pagar</button>
+<main>
+  <h2 style="text-align:center; margin-top: 2rem;">Tu Carrito de Compras</h2>
 
-  <script>
-    // Ejemplo de productos en carrito (puedes reemplazar por tu lógica real)
-    const carrito = [
-      { id: 1, nombre: 'Blusa blanca', precio: 299, cantidad: 1 },
-      { id: 3, nombre: 'Vestido rojo', precio: 799, cantidad: 2 }
-    ];
+  <table class="tabla-carrito" id="tabla-carrito">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Precio Unitario</th>
+        <th>Cantidad</th>
+        <th>Subtotal</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Aquí se llenará con JS -->
+    </tbody>
+  </table>
 
-    const contenedorCarrito = document.getElementById('carrito-contenedor');
+  <h3 style="text-align:center;" id="total-compra">Total: $0.00</h3>
 
-    function mostrarCarrito() {
-      contenedorCarrito.innerHTML = '';
-      carrito.forEach(producto => {
-        const div = document.createElement('div');
-        div.classList.add('producto-carrito');
-        div.innerHTML = `
-          <div class="producto-info">
-            ${producto.nombre} x ${producto.cantidad}
-          </div>
-          <div class="producto-precio">
-            $${(producto.precio * producto.cantidad).toFixed(2)} MXN
-          </div>
-        `;
-        contenedorCarrito.appendChild(div);
-      });
+  <button class="boton-pagar" id="boton-pagar">Pagar</button>
+</main>
+
+<script>
+  // Obtener carrito de localStorage
+  function obtenerCarrito() {
+    return JSON.parse(localStorage.getItem('carrito')) || [];
+  }
+  // Guardar carrito
+  function guardarCarrito(carrito) {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+  }
+  // Actualizar contador menú
+  function actualizarContadorCarrito() {
+    const carrito = obtenerCarrito();
+    const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    const linkCarrito = document.getElementById('link-carrito');
+    if (linkCarrito) {
+      linkCarrito.textContent = `Carrito (${totalItems})`;
+    }
+  }
+
+  // Renderizar tabla carrito
+  function renderizarCarrito() {
+    const carrito = obtenerCarrito();
+    const tbody = document.querySelector('#tabla-carrito tbody');
+    tbody.innerHTML = '';
+
+    if (carrito.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5">Tu carrito está vacío.</td></tr>';
+      document.getElementById('total-compra').textContent = 'Total: $0.00';
+      return;
     }
 
-    mostrarCarrito();
+    let total = 0;
+    carrito.forEach((item, index) => {
+      const subtotal = item.precio * item.cantidad;
+      total += subtotal;
 
-    // Botón pagar redirige a pago.html
-    document.getElementById('btn-pagar').addEventListener('click', () => {
-      window.location.href = 'pago.html';
+      const fila = document.createElement('tr');
+
+      fila.innerHTML = `
+        <td>${item.nombre}</td>
+        <td>$${item.precio.toFixed(2)}</td>
+        <td>
+          <input type="number" min="1" value="${item.cantidad}" data-index="${index}" class="cantidad-producto" style="width: 60px;" />
+        </td>
+        <td>$${subtotal.toFixed(2)}</td>
+        <td>
+          <button class="boton-eliminar" data-index="${index}">Eliminar</button>
+        </td>
+      `;
+
+      tbody.appendChild(fila);
     });
-  </script>
 
+    document.getElementById('total-compra').textContent = `Total: $${total.toFixed(2)}`;
+
+    // Eventos para eliminar
+    document.querySelectorAll('.boton-eliminar').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const idx = e.target.dataset.index;
+        eliminarProducto(idx);
+      });
+    });
+
+    // Eventos para cambiar cantidad
+    document.querySelectorAll('.cantidad-producto').forEach(input => {
+      input.addEventListener('change', e => {
+        const idx = e.target.dataset.index;
+        let valor = parseInt(e.target.value);
+        if (isNaN(valor) || valor < 1) {
+          valor = 1;
+          e.target.value = 1;
+        }
+        cambiarCantidad(idx, valor);
+      });
+    });
+  }
+
+  function eliminarProducto(index) {
+    let carrito = obtenerCarrito();
+    carrito.splice(index, 1);
+    guardarCarrito(carrito);
+    renderizarCarrito();
+    actualizarContadorCarrito();
+  }
+
+  function cambiarCantidad(index, cantidad) {
+    let carrito = obtenerCarrito();
+    carrito[index].cantidad = cantidad;
+    guardarCarrito(carrito);
+    renderizarCarrito();
+    actualizarContadorCarrito();
+  }
+
+  // Simular pago
+  document.getElementById('boton-pagar').addEventListener('click', () => {
+    let carrito = obtenerCarrito();
+    if (carrito.length === 0) {
+      alert('Tu carrito está vacío.');
+      return;
+    }
+    document.getElementById('boton-pagar').addEventListener('click', () => {
+  let carrito = obtenerCarrito();
+  if (carrito.length === 0) {
+    alert('Tu carrito está vacío.');
+    return;
+  }
+  // Redirigir a la página de pago
+  window.location.href = 'pago.html';
+});
+
+  });
+
+  // Al cargar
+  document.addEventListener('DOMContentLoaded', () => {
+    renderizarCarrito();
+    actualizarContadorCarrito();
+  });
+</script>
+<script src="carrito.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    actualizarContadorCarrito();
+    renderizarCarrito(); // o tu lógica de renderizado aquí
+  });
+</script>
+<script>
+  // Cuando se hace clic en un enlace interno
+  document.querySelectorAll('a[href]').forEach(link => {
+    link.addEventListener('click', function (e) {
+      const url = this.href;
+      const isInternal = url.startsWith(location.origin);
+
+      // Solo aplica animación para enlaces internos
+      if (isInternal && !url.includes('#')) {
+        e.preventDefault();
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+          window.location.href = url;
+        }, 500); // Debe coincidir con el tiempo de la animación
+      }
+    });
+  });
+</script>
 </body>
+
 </html>

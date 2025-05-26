@@ -24,6 +24,35 @@
     h2 {
       color: #d63384;
       margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .lista-productos {
+      margin-bottom: 2rem;
+      background: #f8d7da;
+      border-left: 4px solid #d63384;
+      border-radius: 5px;
+      padding: 1rem;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .lista-productos ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .lista-productos li {
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .total {
+      text-align: right;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
     }
 
     label {
@@ -56,23 +85,18 @@
       text-align: center;
       display: none;
     }
-
-    .info-producto {
-      margin-bottom: 2rem;
-      padding: 1rem;
-      background: #f8d7da;
-      border-left: 4px solid #d63384;
-      border-radius: 5px;
-    }
   </style>
 </head>
 <body>
   <div class="contenedor">
     <h2>Finaliza tu compra</h2>
-    <div class="info-producto">
-      <p><strong>Producto:</strong> <span id="producto"></span></p>
-      <p><strong>Precio:</strong> $<span id="precio"></span> MXN</p>
+
+    <div class="lista-productos" id="lista-productos">
+      <strong>Productos en tu carrito:</strong>
+      <ul id="productos-lista"></ul>
     </div>
+
+    <div class="total" id="total-compra">Total: $0.00 MXN</div>
 
     <label for="metodo">Selecciona un método de pago:</label>
     <select id="metodo" onchange="mostrarFormulario()">
@@ -83,16 +107,16 @@
 
     <div id="form-tarjeta" style="display:none;">
       <label>Nombre en la tarjeta:</label>
-      <input type="text" placeholder="Ej. Ana Pérez">
+      <input type="text" placeholder="Ej. Ana Pérez" id="nombre-tarjeta">
 
       <label>Número de tarjeta:</label>
-      <input type="text" placeholder="0000 0000 0000 0000">
+      <input type="text" placeholder="0000 0000 0000 0000" id="numero-tarjeta">
 
       <label>Fecha de expiración:</label>
-      <input type="month">
+      <input type="month" id="fecha-expiracion">
 
       <label>Código de seguridad:</label>
-      <input type="text" placeholder="Ej. 123">
+      <input type="text" placeholder="Ej. 123" id="codigo-seguridad">
     </div>
 
     <div id="codigo-efectivo">
@@ -103,10 +127,54 @@
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    document.getElementById('producto').textContent = params.get('producto') || 'Producto';
-    document.getElementById('precio').textContent = params.get('precio') || '0';
+    // Obtener parámetros producto y precio desde URL
+    function obtenerParametros() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        producto: params.get('producto'),
+        precio: parseFloat(params.get('precio'))
+      };
+    }
 
+    // Mostrar producto individual o carrito completo
+    function mostrarCarrito() {
+      const { producto, precio } = obtenerParametros();
+      const lista = document.getElementById('productos-lista');
+      const totalCompra = document.getElementById('total-compra');
+      lista.innerHTML = '';
+
+      if (producto && precio && !isNaN(precio)) {
+        // Mostrar solo producto individual con cantidad 1
+        const li = document.createElement('li');
+        li.textContent = `${producto} — Cantidad: 1 — Precio unitario: $${precio.toFixed(2)} — Subtotal: $${precio.toFixed(2)}`;
+        lista.appendChild(li);
+        totalCompra.textContent = `Total: $${precio.toFixed(2)} MXN`;
+        return;
+      }
+
+      // Si no hay producto individual, mostrar carrito
+      const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+      if (carrito.length === 0) {
+        lista.innerHTML = '<li>Tu carrito está vacío.</li>';
+        totalCompra.textContent = 'Total: $0.00 MXN';
+        return;
+      }
+
+      let total = 0;
+      carrito.forEach(item => {
+        const cantidad = item.cantidad || 1;
+        const subtotal = item.precio * cantidad;
+        total += subtotal;
+        const li = document.createElement('li');
+        li.textContent = `${item.nombre} — Cantidad: ${cantidad} — Precio unitario: $${item.precio.toFixed(2)} — Subtotal: $${subtotal.toFixed(2)}`;
+        lista.appendChild(li);
+      });
+
+      totalCompra.textContent = `Total: $${total.toFixed(2)} MXN`;
+    }
+
+    // Mostrar formulario según método seleccionado
     function mostrarFormulario() {
       const metodo = document.getElementById('metodo').value;
       document.getElementById('form-tarjeta').style.display = metodo === 'tarjeta' ? 'block' : 'none';
@@ -117,15 +185,34 @@
       }
     }
 
+    // Procesar pago: validar y limpiar carrito
     function procesarPago() {
       const metodo = document.getElementById('metodo').value;
       if (!metodo) {
         alert("Selecciona un método de pago");
         return;
       }
-      alert("Gracias por tu compra 🛍️");
+
+      if (metodo === 'tarjeta') {
+        const nombre = document.getElementById('nombre-tarjeta').value.trim();
+        const numero = document.getElementById('numero-tarjeta').value.trim();
+        const fecha = document.getElementById('fecha-expiracion').value.trim();
+        const codigo = document.getElementById('codigo-seguridad').value.trim();
+
+        if (!nombre || !numero || !fecha || !codigo) {
+          alert("Por favor, completa todos los datos de la tarjeta.");
+          return;
+        }
+      }
+
+      alert("¡Gracias por tu compra 🛍️!");
+      localStorage.removeItem('carrito');
       window.location.href = "index.html";
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      mostrarCarrito();
+    });
   </script>
 </body>
 </html>
