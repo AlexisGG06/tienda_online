@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ofertas - Mi Tiendita</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .producto-oferta {
+      border: 2px solid #d63384;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem;
+      text-align: center;
+      width: 200px;
+    }
+    .productos-contenedor {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .agregar-carrito {
+      background-color: #d63384;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      margin-top: 0.5rem;
+      cursor: pointer;
+    }
+    .agregar-carrito:hover {
+      background-color: #a0285f;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav class="menu">
+    <a href="index.html">Inicio</a>
+    <a href="ofertas.html" class="activo">Ofertas</a>
+    <a href="contacto.html">Contacto</a>
+    <a href="carrito.html" id="link-carrito">Carrito (0)</a>
+  </nav>
+</header>
+
+<main>
+  <h2 style="text-align:center; margin-top: 2rem;">Ofertas Especiales</h2>
+
+  <div class="productos-contenedor">
+   <div class="producto-oferta" data-id="of1" data-nombre="Blusa Floral" data-precio="149.99">
+  <img src="images/blusa floral.jpg" alt="Blusa Floral" />
+  <h3>Blusa Floral</h3>
+  <p>Precio: $149.99</p>
+  <button class="agregar-carrito">Agregar al carrito</button>
+</div>
+
+<div class="producto-oferta" data-id="of2" data-nombre="Jeans Deslavados" data-precio="199.99">
+  <img src="images/jeans deslavados.jpg" alt="Jeans Deslavados" />
+  <h3>Jeans Deslavados</h3>
+  <p>Precio: $199.99</p>
+  <button class="agregar-carrito">Agregar al carrito</button>
+</div>
+
+<div class="producto-oferta" data-id="of3" data-nombre="Chaqueta Ligera" data-precio="299.99">
+  <img src="images/chaqueta ligera.jpg" alt="Chaqueta Ligera" />
+  <h3>Chaqueta Ligera</h3>
+  <p>Precio: $299.99</p>
+  <button class="agregar-carrito">Agregar al carrito</button>
+</div>
+  </div>
+</main>
+
+<script src="carrito.js"></script>
+<script>
+  // Cuando se hace clic en un enlace interno
+  document.querySelectorAll('a[href]').forEach(link => {
+    link.addEventListener('click', function (e) {
+      const url = this.href;
+      const isInternal = url.startsWith(location.origin);
+
+      // Solo aplica animación para enlaces internos
+      if (isInternal && !url.includes('#')) {
+        e.preventDefault();
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+          window.location.href = url;
+        }, 500); // Debe coincidir con el tiempo de la animación
+      }
+    });
+  });
+</script>
+</body>
+</html>

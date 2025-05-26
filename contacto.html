@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tienda de Ropa y Accesorios - Contacto</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+<nav class="menu">
+  <a href="index.html">Inicio</a>
+  <a href="ofertas.html">Ofertas</a>
+  <a href="contacto.html">Contacto</a>
+  <a href="carrito.html" id="link-carrito">Carrito (0)</a>
+</nav>
+
+</header>
+
+<main>
+
+  <section class="seccion-contacto" style="padding: 3rem; max-width: 600px; margin: auto; background-color: #fff0f5; border-radius: 8px;">
+    <h2>Contacto</h2>
+    <p>Si tienes dudas o quieres hacer un pedido, contáctanos.</p>
+
+    <form id="form-contacto" style="display: flex; flex-direction: column; gap: 1rem;">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre" />
+
+      <label for="email">Correo electrónico:</label>
+      <input type="email" id="email" name="email" required placeholder="tu@email.com" />
+
+      <label for="mensaje">Mensaje:</label>
+      <textarea id="mensaje" name="mensaje" rows="5" required placeholder="Escribe tu mensaje aquí..."></textarea>
+
+      <button type="submit" class="boton-comprar" style="align-self: flex-start;">Enviar</button>
+    </form>
+  </section>
+
+</main>
+
+<script>
+  const form = document.getElementById('form-contacto');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Gracias por contactarnos, te responderemos pronto.');
+    form.reset();
+  });
+</script>
+<script>
+  // Cuando se hace clic en un enlace interno
+  document.querySelectorAll('a[href]').forEach(link => {
+    link.addEventListener('click', function (e) {
+      const url = this.href;
+      const isInternal = url.startsWith(location.origin);
+
+      // Solo aplica animación para enlaces internos
+      if (isInternal && !url.includes('#')) {
+        e.preventDefault();
+        document.body.classList.add('fade-out');
+        setTimeout(() => {
+          window.location.href = url;
+        }, 500); // Debe coincidir con el tiempo de la animación
+      }
+    });
+  });
+</script>
+</body>
+</html>
