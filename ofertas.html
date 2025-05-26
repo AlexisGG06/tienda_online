@@ -47,28 +47,38 @@
 <main>
   <h2 style="text-align:center; margin-top: 2rem;">Ofertas Especiales</h2>
 
-  <div class="productos-contenedor">
-   <div class="producto-oferta" data-id="of1" data-nombre="Blusa Floral" data-precio="149.99">
-  <img src="images/blusa floral.jpg" alt="Blusa Floral" />
-  <h3>Blusa Floral</h3>
-  <p>Precio: $149.99</p>
-  <button class="agregar-carrito">Agregar al carrito</button>
-</div>
-
-<div class="producto-oferta" data-id="of2" data-nombre="Jeans Deslavados" data-precio="199.99">
-  <img src="images/jeans deslavados.jpg" alt="Jeans Deslavados" />
-  <h3>Jeans Deslavados</h3>
-  <p>Precio: $199.99</p>
-  <button class="agregar-carrito">Agregar al carrito</button>
-</div>
-
-<div class="producto-oferta" data-id="of3" data-nombre="Chaqueta Ligera" data-precio="299.99">
-  <img src="images/chaqueta ligera.jpg" alt="Chaqueta Ligera" />
-  <h3>Chaqueta Ligera</h3>
-  <p>Precio: $299.99</p>
-  <button class="agregar-carrito">Agregar al carrito</button>
-</div>
+ <div class="productos-contenedor">
+  <div class="producto-oferta" data-id="of1" data-nombre="Blusa Floral" data-precio="149.99">
+    <img src="images/blusa floral.jpg" alt="Blusa Floral" />
+    <h3>Blusa Floral</h3>
+    <p>Precio: $149.99</p>
+    <button class="agregar-carrito">Agregar al carrito</button>
+    <a href="pago.html?producto=Blusa Floral&precio=149.99">
+      <button class="boton-comprar">Comprar</button>
+    </a>
   </div>
+
+  <div class="producto-oferta" data-id="of2" data-nombre="Jeans Deslavados" data-precio="199.99">
+    <img src="images/jeans deslavados.jpg" alt="Jeans Deslavados" />
+    <h3>Jeans Deslavados</h3>
+    <p>Precio: $199.99</p>
+    <button class="agregar-carrito">Agregar al carrito</button>
+    <a href="pago.html?producto=Jeans Deslavados&precio=199.99">
+      <button class="boton-comprar">Comprar</button>
+    </a>
+  </div>
+
+  <div class="producto-oferta" data-id="of3" data-nombre="Chaqueta Ligera" data-precio="299.99">
+    <img src="images/chaqueta ligera.jpg" alt="Chaqueta Ligera" />
+    <h3>Chaqueta Ligera</h3>
+    <p>Precio: $299.99</p>
+    <button class="agregar-carrito">Agregar al carrito</button>
+    <a href="pago.html?producto=Chaqueta Ligera&precio=299.99">
+      <button class="boton-comprar">Comprar</button>
+    </a>
+  </div>
+</div>
+
 </main>
 
 <script src="carrito.js"></script>
@@ -90,5 +100,28 @@
     });
   });
 </script>
+<script>
+  function mostrarModal() {
+    document.getElementById('modal-confirmacion').style.display = 'flex';
+  }
+
+  function cerrarModal() {
+    document.getElementById('modal-confirmacion').style.display = 'none';
+  }
+
+  // Añade evento a los botones "Comprar"
+  document.querySelectorAll('.comprar-boton').forEach(boton => {
+    boton.addEventListener('click', mostrarModal);
+  });
+</script>
+
 </body>
+<!-- Modal de confirmación -->
+<div id="modal-confirmacion" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:white; padding:2rem; border-radius:10px; text-align:center; max-width: 300px;">
+    <h3>¡Compra exitosa!</h3>
+    <p>Gracias por tu compra 🛍️</p>
+    <button onclick="cerrarModal()" style="margin-top:1rem; padding:0.5rem 1rem; background-color:#d63384; color:white; border:none; border-radius:5px;">Cerrar</button>
+  </div>
+</div>
 </html>

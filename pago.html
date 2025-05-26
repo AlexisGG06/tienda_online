@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proceso de Pago</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff0f6;
+      padding: 2rem;
+      color: #333;
+    }
+
+    .contenedor {
+      background: white;
+      max-width: 500px;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #d63384;
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      background-color: #d63384;
+      color: white;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    #codigo-efectivo {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      display: none;
+    }
+
+    .info-producto {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      background: #f8d7da;
+      border-left: 4px solid #d63384;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h2>Finaliza tu compra</h2>
+    <div class="info-producto">
+      <p><strong>Producto:</strong> <span id="producto"></span></p>
+      <p><strong>Precio:</strong> $<span id="precio"></span> MXN</p>
+    </div>
+
+    <label for="metodo">Selecciona un método de pago:</label>
+    <select id="metodo" onchange="mostrarFormulario()">
+      <option value="">-- Selecciona --</option>
+      <option value="tarjeta">Tarjeta</option>
+      <option value="efectivo">Efectivo (OXXO)</option>
+    </select>
+
+    <div id="form-tarjeta" style="display:none;">
+      <label>Nombre en la tarjeta:</label>
+      <input type="text" placeholder="Ej. Ana Pérez">
+
+      <label>Número de tarjeta:</label>
+      <input type="text" placeholder="0000 0000 0000 0000">
+
+      <label>Fecha de expiración:</label>
+      <input type="month">
+
+      <label>Código de seguridad:</label>
+      <input type="text" placeholder="Ej. 123">
+    </div>
+
+    <div id="codigo-efectivo">
+      Tu código de pago es: <br><span style="font-size: 1.5rem;">EFX-<span id="codigo-random"></span></span>
+    </div>
+
+    <button onclick="procesarPago()">Confirmar pago</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById('producto').textContent = params.get('producto') || 'Producto';
+    document.getElementById('precio').textContent = params.get('precio') || '0';
+
+    function mostrarFormulario() {
+      const metodo = document.getElementById('metodo').value;
+      document.getElementById('form-tarjeta').style.display = metodo === 'tarjeta' ? 'block' : 'none';
+      document.getElementById('codigo-efectivo').style.display = metodo === 'efectivo' ? 'block' : 'none';
+
+      if (metodo === 'efectivo') {
+        document.getElementById('codigo-random').textContent = Math.floor(100000 + Math.random() * 900000);
+      }
+    }
+
+    function procesarPago() {
+      const metodo = document.getElementById('metodo').value;
+      if (!metodo) {
+        alert("Selecciona un método de pago");
+        return;
+      }
+      alert("Gracias por tu compra 🛍️");
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
